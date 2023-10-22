@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Gauthiers Add-ons">
+      <HintPath>..\..\..\Gauthier's Add-ons\Gauthiers Add-ons.dll</HintPath>
+    </Reference>
+    <Reference Include="GénérateurId">
+      <HintPath>..\..\GénérateurId\GénérateurId\bin\Debug\net6.0\GénérateurId.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

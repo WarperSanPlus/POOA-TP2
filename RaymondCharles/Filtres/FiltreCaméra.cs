@@ -1,0 +1,30 @@
+﻿using ColorUtils;
+using System.Drawing;
+
+namespace RaymondCharles.Filtres;
+
+/// <summary>
+/// Permet d'associer une couleur d'affichage à un symbole
+/// </summary>
+/// Comme WindowRect supporte Color, les couleurs sont stockées comme Color et non ConsoleColor
+internal class FiltreCaméra
+{
+    internal enum RésultatInsertion { Insertion, MiseÀJour }
+
+    readonly Dictionary<char, Color> SymbolForColor = new();
+
+    /// <summary>
+    /// Associe <paramref name="color"/> à <paramref name="symbole"/>
+    /// </summary>
+    public RésultatInsertion InsérerFiltre(char symbole, ConsoleColor color)
+    {
+        var result = SymbolForColor.ContainsKey(symbole) ? RésultatInsertion.MiseÀJour : RésultatInsertion.Insertion;
+
+        SymbolForColor[symbole] = color.ToColor();
+
+        return result;
+    }
+
+    /// <returns>La couleur associée avec <paramref name="symbole"/></returns>
+    public Color ObtenirFiltre(char symbole) => SymbolForColor.TryGetValue(symbole, out Color color) ? color : Color.White;
+}
