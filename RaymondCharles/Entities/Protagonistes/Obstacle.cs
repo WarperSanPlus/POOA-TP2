@@ -1,12 +1,12 @@
-﻿using RaymondCharles.Affichage;
-using RaymondCharles.Interfaces;
+﻿using RaymondCharles.Interfaces;
 using RaymondCharles.Struct;
 
 namespace RaymondCharles.Entities.Protagonistes;
 
 public class Obstacle : Protagoniste
 {
-    char symbole = 'B';
+    private char symbole = 'B';
+
     public Obstacle(Point initialPosition, IAffichable? menu, char symbole) : base(initialPosition, menu)
     {
         this.symbole = symbole;

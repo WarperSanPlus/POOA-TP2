@@ -34,7 +34,8 @@ public class PanneauAffichage : WindowRect, IAffichable
     /// <inheritdoc cref="WindowRect.ClearText(bool)"/>
     public void Clear() => ClearText(false);
 
-    readonly List<IObservateurAffichage> observateurAffichages = new();
+    private readonly List<IObservateurAffichage> observateurAffichages = new();
+
     public void Abonner(IObservateurAffichage observateurAffichage) => observateurAffichages.Add(observateurAffichage);
 
     public void Write(string message, ConsoleColor couleur)

@@ -15,9 +15,11 @@ internal class Caméra : Capteur
 {
     /// <inheritdoc/>
     public override char Symbole => 'c';
-    readonly IAffichable menuAssocié;
 
-    public Caméra(Point position, IAffichable panneauAffichage) : base(position) {
+    private readonly IAffichable menuAssocié;
+
+    public Caméra(Point position, IAffichable panneauAffichage) : base(position)
+    {
         menuAssocié = panneauAffichage;
     }
 

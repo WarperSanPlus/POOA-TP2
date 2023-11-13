@@ -11,7 +11,7 @@ internal static class Algos
     internal static bool AnyValid<T>(this IEnumerable<T> src, Predicate<T> condition)
     {
         foreach (var item in src)
-            if (condition(item)) 
+            if (condition(item))
                 return true;
         return false;
     }

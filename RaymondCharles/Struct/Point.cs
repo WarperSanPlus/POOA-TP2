@@ -1,11 +1,11 @@
 ﻿/// (DD/MM/YYYY) AUTHOR:
 /// 13/11/2023 SAMUEL GAUTHIER:
 /// - Allowed to compare two object if they are Point (Object.Equals())
-/// 
+///
 /// 21/10/2023 SAMUEL GAUTHIER:
 /// - Made 'X' and 'Y' modifiable after initialisation
 /// - Removed 'Point' read only attribute
-/// 
+///
 /// 21/10/2023 SAMUEL GAUTHIER:
 /// - Made Point and Distance() readonly
 
@@ -33,14 +33,16 @@ public struct Point : IEquatable<Point>
     public readonly bool Equals(Point other) => X.Equals(other.X) && Y.Equals(other.Y);
 
     /// <inheritdoc/>
-    /// Dans le cas où 
-    public readonly override bool Equals(object? obj) => obj is Point p ? Equals(p) : base.Equals(obj);
+    /// Dans le cas où l'on veut comparer un Point avec un object qui pointe vers un Point,
+    /// on utilise Point.Equals. Sinon, on utilise Object.Equals.
+    public override readonly bool Equals(object? obj) => obj is Point p ? Equals(p) : base.Equals(obj);
 
     /// <inheritdoc/>
-    public readonly override int GetHashCode() => base.GetHashCode();
+    public override readonly int GetHashCode() => base.GetHashCode();
 
     /// <inheritdoc/>
     public static bool operator ==(Point c1, Point c2) => c1.Equals(c2);
+
     /// <inheritdoc/>
     public static bool operator !=(Point c1, Point c2) => !(c1 == c2);
 

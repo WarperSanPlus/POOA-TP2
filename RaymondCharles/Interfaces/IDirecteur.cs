@@ -2,7 +2,7 @@
 /// 18/10/2023 SAMUEL GAUTHIER:
 /// - Moved Interfaces.SorteDirecteur to IDirecteur.SorteDirecteur
 /// - Moved Interfaces.Choix to IDirecteur.Choix
-/// 
+///
 /// 18/10/2023 SAMUEL GAUTHIER:
 /// - Added Choix
 

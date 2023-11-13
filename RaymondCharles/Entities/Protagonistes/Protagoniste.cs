@@ -32,7 +32,7 @@ public abstract class Protagoniste
     public Protagoniste(Point initialPosition, IAffichable? menu, IDirecteur directeur)
     {
         Déplacer(initialPosition); // Dans le cas où il y a une procédure à suivre pour déplacer un protagoniste
-        Menu = menu;
+        this.menu = menu;
         Associer(directeur); // Dans le cas où il y a une procédure à suivre pour associer un directeur
     }
 
@@ -41,23 +41,23 @@ public abstract class Protagoniste
     /// <summary>
     /// Menu dans le directeur de ce protagoniste affichera ses informations
     /// </summary>
-    private IAffichable? Menu { get; init; }
+    private IAffichable? menu { get; init; }
 
     /// <summary>
     /// Directeur contrôlant l'entité
     /// </summary>
-    private IDirecteur? Directeur { get; set; }
+    private IDirecteur? directeur { get; set; }
 
     /// <summary>
     /// Fait agir ce <see cref="Protagoniste"/>
     /// </summary>
-    public Choix Agir(Carte carte) => Directeur?.Agir(this, carte, Menu) ?? Choix.Rien;
+    public Choix Agir(Carte carte) => directeur?.Agir(this, carte, menu) ?? Choix.Rien;
 
     /// <summary>
     /// Met <paramref name="directeur"/> comme le <see cref="Directeur"/> de ce protagoniste.
     /// </summary>
     /// Comme les enfants de cette classe n'ont pas accès à Directeur, je préfère que cette classe offre le service directement
-    public void Associer(IDirecteur directeur) => Directeur = directeur;
+    public void Associer(IDirecteur directeur) => this.directeur = directeur;
 
     #endregion Directeur
 
@@ -107,7 +107,7 @@ public abstract class Protagoniste
     /// </summary>
     public abstract char Symbole { get; }
 
-    /// <returns>Symbole à afficher selon <paramref name="carte"/></returns>
+    /// <returns>Symbole à afficher pour ce <see cref="Protagoniste"/> selon l'état de <paramref name="carte"/></returns>
     public virtual char ObtenirSymbole(Carte carte) => Symbole;
 
     #endregion Symbole

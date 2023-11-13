@@ -1,7 +1,7 @@
 ﻿/// (DD/MM/YYYY) AUTHOR:
 /// 13/11/2023 SAMUEL GAUTHIER:
 /// - Changed constant from 'DirectionChoix' to 'ChoixDirection'
-/// 
+///
 /// 18/10/2023 SAMUEL GAUTHIER:
 /// - Changed visibility of DirecteurHumain
 /// - Changed 'protagoniste.Menu.ShowText()' to 'protagoniste.Menu.Write()'
@@ -18,9 +18,10 @@ public class DirecteurHumain : IDirecteur
     // Comme nous ne voulons pas que les contrôles changent pendant
     // l'exécution, nous pouvons créer des constantes pour chaque contrôle
     private const ConsoleKey ChoixQuitter = ConsoleKey.Q;
+
     private const ConsoleKey ChoixHaux = ConsoleKey.UpArrow;
     private const ConsoleKey ChoixBas = ConsoleKey.DownArrow;
-    private const ConsoleKey ChoixDroit = ConsoleKey.RightArrow;
+    private const ConsoleKey ChoixDroite = ConsoleKey.RightArrow;
     private const ConsoleKey ChoixGauche = ConsoleKey.LeftArrow;
 
     public Choix Agir(Protagoniste protagoniste, Carte carte, IAffichable? menu)
@@ -40,7 +41,7 @@ public class DirecteurHumain : IDirecteur
             ChoixQuitter => Choix.Quitter,
             ChoixHaux => Choix.Haut,
             ChoixBas => Choix.Bas,
-            ChoixDroit => Choix.Droite,
+            ChoixDroite => Choix.Droite,
             ChoixGauche => Choix.Gauche,
             _ => Choix.Rien,
         };

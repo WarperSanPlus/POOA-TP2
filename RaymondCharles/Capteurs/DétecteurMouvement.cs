@@ -1,7 +1,7 @@
 ﻿/// (DD/MM/YYYY) AUTHOR:
 /// 21/10/2023 SAMUEL GAUTHIER:
 /// - Added 'paramName' argument in the call of ArgumentException
-/// 
+///
 /// 20/10/2023 SAMUEL GAUTHIER:
 /// - Added static SYMBOLE ('m')
 
@@ -16,9 +16,9 @@ internal class DétecteurMouvement : Capteur
 {
     public static char SYMBOLE = 'm';
 
-    const double TOTAL_RANGE = 5;
-    const double DETECTED_RANGE = 3.5;
-    readonly Ardoise panneau;
+    private const double TOTAL_RANGE = 5;
+    private const double DETECTED_RANGE = 3.5;
+    private readonly Ardoise panneau;
 
     public override char Symbole => SYMBOLE;
 
@@ -30,7 +30,7 @@ internal class DétecteurMouvement : Capteur
         this.panneau = ardoise;
     }
 
-    char[,]? lastPic = null;
+    private char[,]? lastPic = null;
 
     public override void MouvementObservé(Carte carte)
     {

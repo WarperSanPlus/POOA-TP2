@@ -1,10 +1,10 @@
 ﻿/// (DD/MM/YYYY) AUTHOR:
 /// 24/10/2023 SAMUEL GAUTHIER:
 /// - Added 'origin' and 'size' computations
-/// 
+///
 /// 21/10/2023 SAMUEL GAUTHIER:
 /// - Added constant 'DISPLAY_DELAY_MS'
-/// 
+///
 /// 20/10/2023 SAMUEL GAUTHIER:
 /// - Changed the visibility of the cursor
 
@@ -16,12 +16,12 @@ namespace RaymondCharles.Affichage;
 
 public class Écran : IObservateurMouvement, IObservateurAffichage
 {
-    const int DISPLAY_DELAY_MS = 0;
+    private const int DISPLAY_DELAY_MS = 0;
 
-    readonly List<PanneauAffichage> panneaux = new();
-    bool newPanneauAdded = false;
-    Point origin = new();
-    Point size = new();
+    private readonly List<PanneauAffichage> panneaux = new();
+    private bool newPanneauAdded = false;
+    private Point origin = new();
+    private Point size = new();
 
     public void MiseÀJour(PanneauAffichage panneauAffichage)
     {
@@ -51,6 +51,7 @@ public class Écran : IObservateurMouvement, IObservateurAffichage
         }
         return lowestPoint;
     }
+
     private Point CalculateSize()
     {
         Point highestPoint = panneaux[0].Position + new Point(panneaux[0].Width, panneaux[0].Height);
@@ -73,8 +74,8 @@ public class Écran : IObservateurMouvement, IObservateurAffichage
         throw new NotImplementedException();
     }
 
-    Thread? displayThread;
-    bool stopDisplayThread = false;
+    private Thread? displayThread;
+    private bool stopDisplayThread = false;
 
     /// <summary>
     /// Démarre le thread chargé de rafraîchir l'affichage
@@ -129,7 +130,8 @@ public class Écran : IObservateurMouvement, IObservateurAffichage
         return false;
     }
 
-    public class ThreadAlreadyStarted : Exception { }
+    public class ThreadAlreadyStarted : Exception
+    { }
 }
 
 /*

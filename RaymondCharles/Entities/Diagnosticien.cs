@@ -14,23 +14,23 @@ namespace RaymondCharles.Entities;
 /// </summary>
 public class Diagnosticien : IObservateurComportements
 {
-    const int MAX_COLLISIONS = 5;
-    const string DESIRED_STOP = "Départ volontaire";
-    const string HEALTH_STOP = "Risque pour la santé du / de la participant(e)";
-    const string WIN_STOP = "Succès : le / la participant(e) a quitté la pièce";
-    const string UNKNOWN_STOP = "L'expérimentation s'est arrêtée pour une raison inconnue";
+    private const int MAX_COLLISIONS = 5;
+    private const string DESIRED_STOP = "Départ volontaire";
+    private const string HEALTH_STOP = "Risque pour la santé du / de la participant(e)";
+    private const string WIN_STOP = "Succès : le / la participant(e) a quitté la pièce";
+    private const string UNKNOWN_STOP = "L'expérimentation s'est arrêtée pour une raison inconnue";
 
-    readonly Dictionary<Protagoniste, int> CollisionsForProtagoniste = new();
+    private readonly Dictionary<Protagoniste, int> CollisionsForProtagoniste = new();
     //readonly Dictionary<Protagoniste, string> StopReasonsForProtagonistes = new();
 
-    string? raisonArrêt = null;
+    private string? raisonArrêt = null;
 
     /// <returns>L'expérimentation doit se poursuivre, considérant l'état de <paramref name="participant"/></returns>
     public bool Poursuivre(Carte carte, Participant participant) => raisonArrêt == null && !carte.EstSurFrontière(participant.Position);
 
     /// <inheritdoc/>
     /// Possibilité d'overflow
-    /// 
+    ///
     /// Version étendue
     /// if (CollisionsForProtagoniste.TryGetValue(protagoniste, out int hits))
     ///    CollisionsForProtagoniste[protagoniste] = hits + 1;

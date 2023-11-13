@@ -2,18 +2,18 @@
 /// 13/11/2023 SAMUEL GAUTHIER:
 /// - Allowed lines with spaces
 /// - Changed visibility of Valider(Carte)
-/// 
+///
 /// 19/10/2023 SAMUEL GAUTHIER:
 /// - Made 'symbolesParticipants' read only
 /// - Made 'symbolesRequis' read only
 /// - Made 'symbolesPermis' read only
-/// 
+///
 /// 19/10/2023 SAMUEL GAUTHIER:
 /// - Added 'SymboleRequisNonTrouvéException'
-/// 
+///
 /// 18/10/2023 SAMUEL GAUTHIER:
 /// - Changed exceptions to have Carte's exceptions
-/// 
+///
 
 using ArrayUtils;
 using RaymondCharles.Lieux;
@@ -26,9 +26,9 @@ namespace RaymondCharles.Fabriques;
 /// </summary>
 public class FabriqueCarte
 {
-    readonly List<char> symbolesParticipants;
-    readonly List<char> symbolesRequis;
-    readonly List<char> symbolesPermis;
+    private readonly List<char> symbolesParticipants;
+    private readonly List<char> symbolesRequis;
+    private readonly List<char> symbolesPermis;
 
     /// <param name="symbolesParticipants">Liste des symboles possibles pour un participant</param>
     /// <param name="symbolesRequis">Liste de symboles requis</param>
@@ -147,8 +147,15 @@ public class FabriqueCarte
     }
 
     #region Exceptions
-    public class EmptyLineException : Exception { }
-    public class ParticipantAlreadyFoundException : Exception { }
-    public class SymboleRequisNonTrouvéException : Exception { }
-    #endregion
+
+    public class EmptyLineException : Exception
+    { }
+
+    public class ParticipantAlreadyFoundException : Exception
+    { }
+
+    public class SymboleRequisNonTrouvéException : Exception
+    { }
+
+    #endregion Exceptions
 }

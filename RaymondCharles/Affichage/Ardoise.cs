@@ -11,15 +11,15 @@ namespace RaymondCharles.Affichage;
 
 internal class Ardoise : PanneauAffichage
 {
-    const string SEPARATOR = "| ";
-    const int MAX_LENGTH = 15;
+    private const string SEPARATOR = "| ";
+    private const int MAX_LENGTH = 15;
 
-    readonly int drawableHeight;
+    private readonly int drawableHeight;
 
-    readonly List<char> symbolesAssociated = new();
-    readonly List<int> counters = new();
-    
-    readonly List<List<(string text, Color color)>> LinesForCapteurs = new();
+    private readonly List<char> symbolesAssociated = new();
+    private readonly List<int> counters = new();
+
+    private readonly List<List<(string text, Color color)>> LinesForCapteurs = new();
 
     public Ardoise(int x, int y, int width, int height, string name) : base(x, y, width, height, name)
     {
@@ -28,7 +28,7 @@ internal class Ardoise : PanneauAffichage
         //this.BackgroundColor = Color.Purple;
     }
 
-    public void Ajouter(char symbole, string message, ConsoleColor couleur) 
+    public void Ajouter(char symbole, string message, ConsoleColor couleur)
         => Ajouter(symbole, message, couleur.ToColor());
 
     public void Ajouter(char symbole, string message, Color couleur)
@@ -97,7 +97,7 @@ internal class Ardoise : PanneauAffichage
 
     private static string BuildMessage(int counter, char symbole, string text)
     {
-        string message = $"{counter} {symbole} : {text}"; 
+        string message = $"{counter} {symbole} : {text}";
 
         // Add missing spaces
         if (message.Length < MAX_LENGTH)

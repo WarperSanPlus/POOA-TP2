@@ -35,22 +35,22 @@ public class Carte
     /// <summary>
     /// La hauteur de la Carte en nombre de cases
     /// </summary>
-    public int Hauteur => Map.GetLength(0);
+    public int Hauteur => map.GetLength(0);
 
     /// <summary>
     /// La largeur de la Carte en nombre de cases
     /// </summary>
-    public int Largeur => Map.GetLength(1);
+    public int Largeur => map.GetLength(1);
 
     /// <summary>
     /// Représentation graphique de Carte
     /// </summary>
-    private readonly char[,] Map;
+    private readonly char[,] map;
 
     public char this[int x, int y]
     {
-        get => Map[y, x];
-        private set => Map[y, x] = value;
+        get => map[y, x];
+        private set => map[y, x] = value;
     }
 
     public char this[Point position]
@@ -63,15 +63,16 @@ public class Carte
 
     internal Carte(char[,] map)
     {
-        Map = map;
+        this.map = map;
     }
 
     #region Predicat
+
     /// <returns><paramref name="position"/> est libre</returns>
     public bool EstDisponible(Point position)
     {
         // Si la position est hors de la map, pas besoin d'attendre pour le lock
-        if (!EstDans(position)) 
+        if (!EstDans(position))
             return false;
 
         lock (this) // Merci pour la DLL
@@ -87,6 +88,7 @@ public class Carte
     #endregion Predicat
 
     #region Capteurs
+
     /// <summary>
     /// Positionne chacun des capteurs sur la Carte
     /// </summary>
@@ -99,7 +101,7 @@ public class Carte
             {
                 if (!EstDisponible(capteur.Position))
                     throw new PositionIllégaleException();
-                    //return;
+                //return;
 
                 this[capteur.Position] = capteur.Symbole;
                 Abonner(capteur);
@@ -111,14 +113,15 @@ public class Carte
     /// <returns><paramref name="c"/> représente un <see cref="Capteur"/></returns>
     public bool EstCapteur(char c)
     {
-        lock (ObservateurMouvements) // Un Capteur est un observateur de mouvements
-            return ObservateurMouvements.AnyValid(om => om is Capteur cap && cap.Symbole == c);
+        lock (observateurMouvements) // Un Capteur est un observateur de mouvements
+            return observateurMouvements.AnyValid(om => om is Capteur cap && cap.Symbole == c);
     }
+
     #endregion Capteurs
 
     #region IObservateursMouvements
 
-    private readonly List<IObservateurMouvement> ObservateurMouvements = new();
+    private readonly List<IObservateurMouvement> observateurMouvements = new();
 
     /// <summary>
     /// Service par lequel un observateur de mouvement s'abonne à la Carte
@@ -126,8 +129,8 @@ public class Carte
     /// <param name="mouvement"></param>
     public void Abonner(IObservateurMouvement mouvement)
     {
-        lock (ObservateurMouvements) // Lock if someone is iterating through the list
-            ObservateurMouvements.Add(mouvement);
+        lock (observateurMouvements) // Lock if someone is iterating through the list
+            observateurMouvements.Add(mouvement);
     }
 
     /// <summary>
@@ -135,13 +138,14 @@ public class Carte
     /// </summary>
     private void ChangementObservé()
     {
-        lock (ObservateurMouvements) // Lock if someone adds an item while this is running
-            ObservateurMouvements.ForEach((item) => item.MouvementObservé(this));
+        lock (observateurMouvements) // Lock if someone adds an item while this is running
+            observateurMouvements.ForEach((item) => item.MouvementObservé(this));
     }
 
-    #endregion ObservateursMouvements
+    #endregion IObservateursMouvements
 
     #region Mouvement
+
     /// <summary>
     /// Détermine si le mouvement dirigé par <paramref name="choix"/> est valide
     /// </summary>
@@ -224,11 +228,13 @@ public class Carte
     //}
 
     private bool Respecte(Point pos, Predicate<char> pred) => pred(this[pos]); // Merci pour la DLL
+
     private bool Respecte(Point pos, char target) => Respecte(pos, (char c) => c.Equals(target));
 
-    #endregion Character Finding / Identifiacation
+    #endregion Character Finding / Identification
 
     #region Protagoniste
+
     /// <summary>
     /// Positionne <paramref name="obst"/> à sa position si cette dernière est disponible
     /// </summary>
@@ -287,7 +293,8 @@ public class Carte
         // Signalé le mouvement
         ChangementObservé();
     }
-    #endregion
+
+    #endregion Protagoniste
 
     /// <returns>Copie du contenu de la carte</returns>
     public char[,] Snapshot()
@@ -310,10 +317,21 @@ public class Carte
     }
 
     #region Exceptions
-    public class PositionIllégaleException : Exception  { }
-    public class PasDeCarteException : Exception { }
-    public class CarteNonRectangulaireException : Exception { }
-    public class SymboleManquantException : Exception { }
-    public class SymboleIllégalException : Exception { }
-    #endregion
+
+    public class PositionIllégaleException : Exception
+    { }
+
+    public class PasDeCarteException : Exception
+    { }
+
+    public class CarteNonRectangulaireException : Exception
+    { }
+
+    public class SymboleManquantException : Exception
+    { }
+
+    public class SymboleIllégalException : Exception
+    { }
+
+    #endregion Exceptions
 }

@@ -1,16 +1,16 @@
 ﻿/// (DD/MM/YYYY) AUTHOR:
 /// 13/11/2023 SAMUEL GAUTHIER:
 /// - Changed Random object (global to local)
-/// 
+///
 /// 20/10/2023 SAMUEL GAUTHIER:
 /// - Changed amount of Capteur from constant to parameters amount
-/// 
+///
 /// 20/10/2023 SAMUEL GAUTHIER:
 /// - Fix random available tile picker
-/// 
+///
 /// 19/10/2023 SAMUEL GAUTHIER:
 /// - Changed IAffichable[] to PanneauAffichage[]
-/// 
+///
 /// 18/10/2023 SAMUEL GAUTHIER:
 /// - Changed CartePleinException => PlacesLibresInsuffisantesException
 /// - Changed PanneauAffichage[] to IAffichable[]
@@ -28,7 +28,7 @@ namespace RaymondCharles.Capteurs;
 /// </summary>
 internal class Centrale
 {
-    readonly List<Capteur> CapteursInstallés = new();
+    private readonly List<Capteur> CapteursInstallés = new();
 
     public Centrale()
     {
@@ -43,7 +43,7 @@ internal class Centrale
     internal void Populer(Carte carte, Protagoniste protagoniste, params PanneauAffichage[] panneauAffichages)
     {
         var emptySpots = carte.Trouver(Carte.Symboles.VIDE);
-        
+
         if (emptySpots.Count < panneauAffichages.Length)
             throw new PlacesLibresInsuffisantesException();
 
@@ -78,6 +78,9 @@ internal class Centrale
     }
 
     #region Exceptions
-    public class PlacesLibresInsuffisantesException : Exception { }
-    #endregion
+
+    public class PlacesLibresInsuffisantesException : Exception
+    { }
+
+    #endregion Exceptions
 }

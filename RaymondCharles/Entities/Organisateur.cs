@@ -20,9 +20,9 @@ public class Organisateur
     /// <param name="protagoniste"></param>
     /// <returns></returns>
     public static (Diagnosticien, Écran, Obstacleur) Organiser(
-        Carte carte, 
-        Protagoniste protagoniste, 
-        SorteDirecteur sorte, 
+        Carte carte,
+        Protagoniste protagoniste,
+        SorteDirecteur sorte,
         PanneauAffichage menu)
     {
         // Créer le panneau d'affichage où le jeu s'affichera
@@ -33,13 +33,13 @@ public class Organisateur
 
         menu.Abonner(écran);
         jeuPanneau.Abonner(écran); // Must be subscribe before first update
-        
+
         // Mettre l'ardoise à droite du jeu
         var ardoise = new Ardoise(
             jeuPanneau.Position.X + jeuPanneau.Width + 1,
             0,
             ConsoleClassique.NB_COLONNES - jeuPanneau.Width - 1,
-            carte.Hauteur, 
+            carte.Hauteur,
             "Ardoise"
         );
         ardoise.Abonner(écran);
@@ -65,7 +65,7 @@ public class Organisateur
 
         // Abonner l'écran à la carte
         //carte.Abonner(écran);
-        
+
         // Démarrer l'affichage de l'écran
         écran.Démarrer();
 

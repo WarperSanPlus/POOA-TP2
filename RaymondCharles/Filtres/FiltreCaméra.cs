@@ -9,9 +9,10 @@ namespace RaymondCharles.Filtres;
 /// Comme WindowRect supporte Color, les couleurs sont stockées comme Color et non ConsoleColor
 internal class FiltreCaméra
 {
-    internal enum RésultatInsertion { Insertion, MiseÀJour }
+    internal enum RésultatInsertion
+    { Insertion, MiseÀJour }
 
-    readonly Dictionary<char, Color> SymbolForColor = new();
+    private readonly Dictionary<char, Color> SymbolForColor = new();
 
     /// <summary>
     /// Associe <paramref name="color"/> à <paramref name="symbole"/>

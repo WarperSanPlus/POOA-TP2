@@ -1,7 +1,7 @@
-﻿using System.Drawing;
-using ColorUtils;
+﻿using ColorUtils;
 using RaymondCharles.Affichage;
 using RaymondCharles.Lieux;
+using System.Drawing;
 
 namespace RaymondCharles.Fabriques;
 

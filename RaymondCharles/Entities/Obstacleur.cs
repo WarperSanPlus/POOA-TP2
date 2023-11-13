@@ -1,10 +1,10 @@
 ﻿/// (DD/MM/YYYY) AUTHOR:
 /// 13/11/2023 SAMUEL GAUTHIER:
 /// - Fix thread obstacle range
-/// 
+///
 /// 21/10/2023 SAMUEL GAUTHIER:
 /// - Added Démarrer()
-/// 
+///
 /// 21/10/2023 SAMUEL GAUTHIER:
 /// - Added const MOVEMENT_DELAY_MS
 
@@ -20,8 +20,8 @@ public class Obstacleur
     private const int NUM_THREADS = 4;
     private const int MOVEMENT_DELAY_MS = 1000;
 
-    Thread?[]? threadsOpened;
-    bool requestEnd = false;
+    private Thread?[]? threadsOpened;
+    private bool requestEnd = false;
 
     internal void Populer(Carte carte, int amount)
     {
@@ -58,6 +58,7 @@ public class Obstacleur
         Console.Clear();
 
         #region Equalize threads (merci mon projet C++ :D)
+
         // eg: 25 entities into 4 threads => (7; 6; 6; 6)
         int BASE_NUM = amount / NUM_THREADS; // Base # of entities per thread
         int MIN_INDEX = amount - BASE_NUM * NUM_THREADS; // Threads with an additional entity
@@ -110,7 +111,8 @@ public class Obstacleur
             beginIndex += elementCount;
             elementCount = 0;
         }
-        #endregion
+
+        #endregion Equalize threads (merci mon projet C++ :D)
     }
 
     public void Démarrer()
@@ -119,7 +121,7 @@ public class Obstacleur
             return;
 
         foreach (var item in threadsOpened)
-            item?.Start();   
+            item?.Start();
     }
 
     /// <summary>

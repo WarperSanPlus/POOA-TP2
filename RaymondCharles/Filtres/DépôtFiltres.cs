@@ -2,7 +2,7 @@
 
 internal static class DépôtFiltres
 {
-    static readonly Stack<FiltreCaméra> FiltresActifs = new();
+    private static readonly Stack<FiltreCaméra> FiltresActifs = new();
 
     /// <summary>
     /// Ajoute <paramref name="filtre"/> au dessus de <see cref="FiltresActifs"/>

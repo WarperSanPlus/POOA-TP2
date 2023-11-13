@@ -17,7 +17,7 @@ namespace RaymondCharles.Capteurs;
 /// </summary>
 internal class CaméraProximale : Capteur
 {
-    const double MaxDistance = 3.5;
+    private const double MaxDistance = 3.5;
     internal const char SYMBOLE = 'X';
 
     /// <inheritdoc/>
@@ -26,9 +26,9 @@ internal class CaméraProximale : Capteur
     /// <summary>
     /// <see cref="Protagoniste"/> que cette caméra supervise
     /// </summary>
-    readonly Protagoniste target;
+    private readonly Protagoniste target;
 
-    readonly IAffichable menuAssocié;
+    private readonly IAffichable menuAssocié;
 
     public CaméraProximale(Point position, Protagoniste protagoniste, IAffichable panneauAffichage) : base(position)
     {
