@@ -1,4 +1,7 @@
 ﻿/// (DD/MM/YYYY) AUTHOR:
+/// 13/11/2023 SAMUEL GAUTHIER:
+/// - Removed Projeter()
+///
 /// 19/10/2023 SAMUEL GAUTHIER:
 /// - Made 'colorRule' in Write() nullable
 
@@ -26,21 +29,28 @@ public class PanneauAffichage : WindowRect, IAffichable
     /// afin d'obtenir la position dans le bon type
     public new Struct.Point Position => new(base.Position.X, base.Position.Y);
 
-    /// Implémenter par WindowRect.ShowText en passant 'true' pour le paramètre 'refresh'
-    //public void Projeter() => this.ShowPixels();
-
     Color IAffichable.Fond => BackgroundColor;
+
+    #region Observateurs Affichage
+
+    private readonly List<IObservateurAffichage> observateursAffichage = new();
+
+    public void Abonner(IObservateurAffichage observateurAffichage)
+    {
+        lock (observateurAffichage) // Waits for any iteration to end
+            observateursAffichage.Add(observateurAffichage);
+    }
+
+    #endregion Observateurs Affichage
+
+    #region IAffichable
 
     /// <inheritdoc cref="WindowRect.ClearText(bool)"/>
     public void Clear() => ClearText(false);
 
-    private readonly List<IObservateurAffichage> observateurAffichages = new();
-
-    public void Abonner(IObservateurAffichage observateurAffichage) => observateurAffichages.Add(observateurAffichage);
-
     public void Write(string message, ConsoleColor couleur)
     {
-        var correctColor = couleur.ToColor();
+        var correctColor = couleur.ToColor(); // Prevent to call ToColor() each time
         Write(message, (_, _, _) => correctColor);
     }
 
@@ -56,7 +66,13 @@ public class PanneauAffichage : WindowRect, IAffichable
 
     public void Write(string message, Func<int, int, char, Color>? colorRule)
     {
+        colorRule ??= new Func<int, int, char, Color>((_, _, _) => this.TextColor);
+
         ShowText(message, colorRule, false);
-        observateurAffichages.ForEach(ioa => ioa.MiseÀJour(this));
+
+        lock (observateursAffichage) // Prevent to add an observateur while iterating
+            observateursAffichage.ForEach(ioa => ioa.MiseÀJour(this));
     }
+
+    #endregion IAffichable
 }

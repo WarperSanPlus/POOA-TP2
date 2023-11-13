@@ -1,4 +1,7 @@
 ﻿/// (DD/MM/YYYY) AUTHOR:
+/// 13/11/2023 SAMUEL GAUTHIER:
+/// - Renamed constant from 'MaxDistance' to 'MAX_DISTANCE_RANGE'
+/// 
 /// 21/10/2023 SAMUEL GAUTHIER:
 /// - Made 'menuAssocié' read only
 /// - Renamed 'Protagoniste' to 'target'
@@ -17,7 +20,7 @@ namespace RaymondCharles.Capteurs;
 /// </summary>
 internal class CaméraProximale : Capteur
 {
-    private const double MaxDistance = 3.5;
+    private const double MAX_DISTANCE_RANGE = 3.5;
     internal const char SYMBOLE = 'X';
 
     /// <inheritdoc/>
@@ -37,13 +40,16 @@ internal class CaméraProximale : Capteur
     }
 
     /// <inheritdoc/>
-    public override void MouvementObservé(Carte carte)
+    public override void MouvementObservé(Carte carte) => menuAssocié.Write(carte.ToString(), GetColor);
+
+    // Un ternaire fonctionnerait, mais j'ai choisi ça s'il y a + de checks à faire
+    private System.Drawing.Color GetColor(int x, int y, char c)
     {
-        menuAssocié.Write(carte.ToString(),
-            (x, y, c) =>
-            target.Position.Distance(x, y) > MaxDistance ?
-            DépôtFiltres.Courant().ObtenirFiltre(c) :
-            System.Drawing.Color.Cyan
-        );
+        System.Drawing.Color color = System.Drawing.Color.Cyan;
+
+        if (target.Position.Distance(x, y) > MAX_DISTANCE_RANGE)
+            color = DépôtFiltres.Courant().ObtenirFiltre(c);
+
+        return color;
     }
 }

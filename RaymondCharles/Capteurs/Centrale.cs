@@ -28,7 +28,7 @@ namespace RaymondCharles.Capteurs;
 /// </summary>
 internal class Centrale
 {
-    private readonly List<Capteur> CapteursInstallés = new();
+    private readonly List<Capteur> capteursInstallés = new();
 
     public Centrale()
     {
@@ -65,7 +65,7 @@ internal class Centrale
             if (cap != null)
             {
                 capteurs.Add(cap);
-                CapteursInstallés.Add(cap);
+                capteursInstallés.Add(cap);
             }
 
             emptySpots.RemoveAt(emptySpots.Count - 1);

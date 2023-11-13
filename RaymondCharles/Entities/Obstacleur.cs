@@ -25,6 +25,38 @@ public class Obstacleur
 
     internal void Populer(Carte carte, int amount)
     {
+        threadsOpened = CréerThreads(CréerObstacles(carte, amount), (obstacle) =>
+        {
+            var choix = obstacle.Agir(carte);
+            carte.Appliquer(obstacle, choix);
+        });
+    }
+
+    public void Démarrer()
+    {
+        if (threadsOpened == null)
+            return;
+
+        foreach (var item in threadsOpened)
+            item?.Start();
+    }
+
+    /// <summary>
+    /// Demande l'arrêt des threads lancés par ce <see cref="Obstacleur"/>
+    /// </summary>
+    public void Terminer()
+    {
+        requestEnd = true;
+
+        if (threadsOpened == null)
+            return;
+
+        foreach (var item in threadsOpened)
+            item?.Join();
+    }
+
+    private static Obstacle[] CréerObstacles(Carte carte, int amount)
+    {
         List<Point> emptySpaces = carte.Trouver(Carte.Symboles.VIDE);
 
         if (emptySpaces.Count < amount) // Regarde si le code va crash
@@ -56,24 +88,38 @@ public class Obstacleur
         }
 
         Console.Clear();
+        return obstacles;
+    }
+    private Thread?[] CréerThreads<T>(T[] objects, Action<T> objectUpdate)
+    {
+        // # of entities to distribute
+        int amount = objects.Length;
 
-        #region Equalize threads (merci mon projet C++ :D)
+        // Base # of entities per thread
+        int BASE_NUM = amount / NUM_THREADS;
 
-        // eg: 25 entities into 4 threads => (7; 6; 6; 6)
-        int BASE_NUM = amount / NUM_THREADS; // Base # of entities per thread
-        int MIN_INDEX = amount - BASE_NUM * NUM_THREADS; // Threads with an additional entity
+        // Threads with an additional entity
+        int MIN_INDEX = amount - BASE_NUM * NUM_THREADS; 
 
-        threadsOpened = new Thread?[Math.Min(amount, NUM_THREADS)]; // Don't need 4 threads if there are only 2 entities
+        // Don't need 4 threads if there are only 2 entities
+        Thread?[] threadsOpened = new Thread?[Math.Min(amount, NUM_THREADS)]; 
 
+        // # of threads opened
         int threadsCount = 0;
+
+        // # of entities the next thread will have
         int nextCount = BASE_NUM;
 
         if (MIN_INDEX > threadsCount)
             ++nextCount;
 
+        // Current # of entities in the current thread
         int elementCount = 0;
+
+        // Start index of the current range
         int beginIndex = 0;
 
+        // eg: 25 entities into 4 threads => (7; 6; 6; 6)
         for (int i = 0; i < amount; ++i)
         {
             ++elementCount;
@@ -82,25 +128,20 @@ public class Obstacleur
                 continue;
 
             int begin = beginIndex;
-            int end = Math.Min(obstacles.Length, begin + elementCount);
+            int end = Math.Min(amount, begin + elementCount);
 
-            // THREAD
-            var newThread = new Thread(() =>
+            threadsOpened[threadsCount] = new Thread(() =>
             {
                 while (!requestEnd)
                 {
-                    for (int j = begin; j < end; ++j)
+                    if (objectUpdate != null)
                     {
-                        var choix = obstacles[j].Agir(carte);
-                        carte.Appliquer(obstacles[j], choix);
+                        for (int j = begin; j < end; ++j)
+                            objectUpdate.Invoke(objects[j]);
                     }
                     Thread.Sleep(MOVEMENT_DELAY_MS);
                 }
             });
-            // ---
-
-            // Ajouter le nouveau thread
-            threadsOpened[threadsCount] = newThread;
             // ---
 
             ++threadsCount;
@@ -108,31 +149,10 @@ public class Obstacleur
             nextCount = BASE_NUM;
             if (MIN_INDEX > threadsCount)
                 ++nextCount;
+
             beginIndex += elementCount;
             elementCount = 0;
         }
-
-        #endregion Equalize threads (merci mon projet C++ :D)
-    }
-
-    public void Démarrer()
-    {
-        if (threadsOpened == null)
-            return;
-
-        foreach (var item in threadsOpened)
-            item?.Start();
-    }
-
-    /// <summary>
-    /// Demande l'arrêt des threads lancés par ce <see cref="Obstacleur"/>
-    /// </summary>
-    public void Terminer()
-    {
-        requestEnd = true;
-
-        if (threadsOpened != null)
-            foreach (var item in threadsOpened)
-                item?.Join();
+        return threadsOpened;
     }
 }

@@ -1,4 +1,7 @@
 ﻿/// (DD/MM/YYYY) AUTHOR:
+/// 13/11/2023 SAMUEL GAUTHIER:
+/// - Changed constants from 'REASON_STOP' to 'STOP_REASON'
+/// 
 /// 21/10/2023 SAMUEL GAUTHIER:
 /// - Removed ShouldProtagonisteContinue()
 
@@ -14,13 +17,17 @@ namespace RaymondCharles.Entities;
 /// </summary>
 public class Diagnosticien : IObservateurComportements
 {
-    private const int MAX_COLLISIONS = 5;
-    private const string DESIRED_STOP = "Départ volontaire";
-    private const string HEALTH_STOP = "Risque pour la santé du / de la participant(e)";
-    private const string WIN_STOP = "Succès : le / la participant(e) a quitté la pièce";
-    private const string UNKNOWN_STOP = "L'expérimentation s'est arrêtée pour une raison inconnue";
+    #region Constantes
 
-    private readonly Dictionary<Protagoniste, int> CollisionsForProtagoniste = new();
+    private const int MAX_COLLISIONS = 5;
+    private const string STOP_DESIRED = "Départ volontaire";
+    private const string STOP_HEALTH = "Risque pour la santé du / de la participant(e)";
+    private const string STOP_WIN = "Succès : le / la participant(e) a quitté la pièce";
+    private const string STOP_UNKNOWN = "L'expérimentation s'est arrêtée pour une raison inconnue";
+
+    #endregion Constantes
+
+    private readonly Dictionary<Protagoniste, int> collisionsForProtagoniste = new();
     //readonly Dictionary<Protagoniste, string> StopReasonsForProtagonistes = new();
 
     private string? raisonArrêt = null;
@@ -38,16 +45,16 @@ public class Diagnosticien : IObservateurComportements
     ///     CollisionsForProtagoniste.Add(protagoniste, 1);
     public void CollisionObservée(Protagoniste protagoniste)
     {
-        CollisionsForProtagoniste[protagoniste] = CollisionsForProtagoniste.TryGetValue(protagoniste, out int hits) ? hits + 1 : 1;
+        collisionsForProtagoniste[protagoniste] = collisionsForProtagoniste.TryGetValue(protagoniste, out int hits) ? hits + 1 : 1;
 
-        if (CollisionsForProtagoniste[protagoniste] > MAX_COLLISIONS)
-            raisonArrêt = HEALTH_STOP;
+        if (collisionsForProtagoniste[protagoniste] > MAX_COLLISIONS)
+            raisonArrêt = STOP_HEALTH;
 
         Console.Beep(); // async ?
     }
 
     /// <returns>Explications des raisons de l'arrêt demandé par le <see cref="Diagnosticien"/></returns>
-    public string ExpliquerArrêt() => raisonArrêt ?? UNKNOWN_STOP;
+    public string ExpliquerArrêt() => raisonArrêt ?? STOP_UNKNOWN;
 
     /// <returns>Raison de l'arrêt causé par <paramref name="protagoniste"/></returns>
     //private string ExpliquerArrêt(Protagoniste protagoniste) => StopReasonsForProtagonistes.TryGetValue(protagoniste, out string? reason) ? reason : UNKNOWN_STOP;
@@ -56,13 +63,13 @@ public class Diagnosticien : IObservateurComportements
     {
         // En ordre de priorité
         if (choix == Choix.Quitter)
-            raisonArrêt = DESIRED_STOP;
+            raisonArrêt = STOP_DESIRED;
         else
         {
             bool isValid = carte.IsMovementValid(protagoniste, choix, out Struct.Point pos);
 
             if (isValid && carte.EstSurFrontière(pos))
-                raisonArrêt = WIN_STOP;
+                raisonArrêt = STOP_WIN;
         }
         return choix;
     }

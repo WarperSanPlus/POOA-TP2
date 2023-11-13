@@ -14,10 +14,13 @@ namespace RaymondCharles.Capteurs;
 
 internal class DétecteurMouvement : Capteur
 {
-    public static char SYMBOLE = 'm';
+    #region Constantes
 
+    public const char SYMBOLE = 'm';
     private const double TOTAL_RANGE = 5;
     private const double DETECTED_RANGE = 3.5;
+    #endregion Constantes
+
     private readonly Ardoise panneau;
 
     public override char Symbole => SYMBOLE;
@@ -44,15 +47,15 @@ internal class DétecteurMouvement : Capteur
 
         newPic.ForEach((x, y, c) =>
         {
-            if (c != Carte.Symboles.VIDE && c != lastPic[x, y])
-            {
-                var distance = this.Position.Distance(y, x);
+            if (c == Carte.Symboles.VIDE || c == lastPic[x, y])
+                return;
 
-                if (distance > TOTAL_RANGE)
-                    return;
+            var distance = this.Position.Distance(y, x);
 
-                panneau.Ajouter(c, Math.Round(distance, 2).ToString(), distance <= DETECTED_RANGE ? ConsoleColor.Red : ConsoleColor.Yellow);
-            }
+            if (distance > TOTAL_RANGE)
+                return;
+
+            panneau.Ajouter(c, Math.Round(distance, 2).ToString(), distance <= DETECTED_RANGE ? ConsoleColor.Red : ConsoleColor.Yellow);
         });
 
         lastPic = newPic;

@@ -52,13 +52,29 @@ public class FabriqueCarte
         using var reader = new StreamReader(path);
 
         var lines = new List<string>();
-#nullable disable
-        for (string s = reader.ReadLine(); s != null; s = reader.ReadLine())
+        for (string? s = reader.ReadLine(); s != null; s = reader.ReadLine())
             lines.Add(s);
-#nullable restore
 
         return Valider(new Carte(ToData(Valider(lines))));
     }
+
+    /// <returns>Représentation en tableau 2D de char de la surface décrite par <paramref name="lines"/></returns>
+    private static char[,] ToData(List<string> lines)
+    {
+        var charArray = new char[lines.Count, lines[0].Length];
+
+        // Fetch chaque line puis fetch chaque caractère du string
+        lines.ForEach((y, line) =>
+        {
+            for (int x = 0; x != line.Length; ++x)
+            {
+                charArray[y, x] = line[x];
+            }
+        });
+        return charArray;
+    }
+
+    #region Validations
 
     /// <summary>
     /// Vérifie que <paramref name="lines"/> peut former une <see cref="Carte"/> avec une forme valide
@@ -85,26 +101,9 @@ public class FabriqueCarte
         return lines;
     }
 
-    /// <returns>Représentation en tableau 2D de char de la surface décrite par <paramref name="lines"/></returns>
-    private static char[,] ToData(List<string> lines)
-    {
-        var charArray = new char[lines.Count, lines[0].Length];
-
-        // Fetch chaque line puis fetch chaque caractère du string
-        lines.ForEach((y, line) =>
-        {
-            for (int x = 0; x != line.Length; ++x)
-            {
-                charArray[y, x] = line[x];
-            }
-        });
-        return charArray;
-    }
-
     private Carte Valider(Carte carte)
     {
         bool participantFound = false;
-
         var symbolesRequisTrouvés = new List<char>(symbolesRequis);
 
         for (int y = 0; y < carte.Hauteur; y++)
@@ -145,6 +144,8 @@ public class FabriqueCarte
 
         return carte;
     }
+
+    #endregion Validations
 
     #region Exceptions
 

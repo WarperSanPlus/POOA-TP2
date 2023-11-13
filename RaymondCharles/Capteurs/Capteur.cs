@@ -15,29 +15,40 @@ namespace RaymondCharles.Capteurs;
 
 public abstract class Capteur : IObservateurMouvement, IDisposable
 {
-    private static readonly IGénérateurId GénérateurCapteur = new FabriqueGénérateurs().Créer(TypeGénérateur.Recycleur);
-
     /// <summary>
     /// Position du <see cref="Capteur"/>
     /// </summary>
     public Point Position { get; init; }
-
-    private Identifiant identifiant;
 
     /// <summary>
     /// Symbole à afficher sur la <see cref="Carte"/>
     /// </summary>
     public abstract char Symbole { get; }
 
+#nullable disable
     public Capteur(Point position)
     {
         Position = position;
-        identifiant = GénérateurCapteur.Prendre();
+        CreateIdentifiant(); // VS pense que 'identifiant' est nul, alors qu'il sera initialisé ici
     }
+#nullable restore
 
     /// <inheritdoc/>
     public abstract void MouvementObservé(Carte carte);
 
+    #region Identifiant
+
+    private static readonly IGénérateurId GénérateurCapteur = new FabriqueGénérateurs().Créer(TypeGénérateur.Recycleur);
+
+    private Identifiant identifiant;
+
+    private void CreateIdentifiant()
+    {
+        identifiant = GénérateurCapteur.Prendre();
+    }
+
     // Quand le capteur n'est plus utilisé, retourner l'identifiant
     public void Dispose() => GénérateurCapteur.Rendre(identifiant);
+
+    #endregion Identifiant
 }

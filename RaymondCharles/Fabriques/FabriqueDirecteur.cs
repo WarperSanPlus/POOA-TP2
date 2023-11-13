@@ -7,7 +7,9 @@ namespace RaymondCharles.Fabriques;
 public static class FabriqueDirecteur
 {
     public static SorteDirecteur TraduireSorte(string nomSorte)
-        => Enum.TryParse(typeof(SorteDirecteur), nomSorte, out object? sorte) && sorte != null ? (SorteDirecteur)sorte : SorteDirecteur.inconnu;
+        => Enum.TryParse(typeof(SorteDirecteur), nomSorte, out object? sorte) && sorte != null ? 
+            (SorteDirecteur)sorte : 
+            SorteDirecteur.inconnu;
 
     public static IDirecteur Créer(SorteDirecteur sorte) => sorte switch
     {
