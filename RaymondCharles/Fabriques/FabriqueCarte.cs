@@ -1,4 +1,8 @@
 ﻿/// (DD/MM/YYYY) AUTHOR:
+/// 13/11/2023 SAMUEL GAUTHIER:
+/// - Allowed lines with spaces
+/// - Changed visibility of Valider(Carte)
+/// 
 /// 19/10/2023 SAMUEL GAUTHIER:
 /// - Made 'symbolesParticipants' read only
 /// - Made 'symbolesRequis' read only
@@ -70,7 +74,7 @@ public class FabriqueCarte
         lines.ForEach(line =>
         {
             // Check if the line is empty
-            if (line.Trim().Length == 0)
+            if (line.Length == 0)
                 throw new EmptyLineException();
 
             // Check if the map is a full rectangle
@@ -97,7 +101,7 @@ public class FabriqueCarte
         return charArray;
     }
 
-    public Carte Valider(Carte carte)
+    private Carte Valider(Carte carte)
     {
         bool participantFound = false;
 

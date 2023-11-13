@@ -14,9 +14,11 @@ internal class Ardoise : PanneauAffichage
     const string SEPARATOR = "| ";
     const int MAX_LENGTH = 15;
 
-    readonly int drawableHeight = 0;
+    readonly int drawableHeight;
 
-    readonly Dictionary<char, int> indexesForCapteurs = new();
+    readonly List<char> symbolesAssociated = new();
+    readonly List<int> counters = new();
+    
     readonly List<List<(string text, Color color)>> LinesForCapteurs = new();
 
     public Ardoise(int x, int y, int width, int height, string name) : base(x, y, width, height, name)
@@ -26,39 +28,39 @@ internal class Ardoise : PanneauAffichage
         //this.BackgroundColor = Color.Purple;
     }
 
-    public void Ajouter(char symbole, string message, ConsoleColor couleur) => Ajouter(symbole, message, couleur.ToColor());
+    public void Ajouter(char symbole, string message, ConsoleColor couleur) 
+        => Ajouter(symbole, message, couleur.ToColor());
+
     public void Ajouter(char symbole, string message, Color couleur)
     {
+        int index = symbolesAssociated.IndexOf(symbole);
+
         // Build the message
-        string text = $"0 {symbole} : {message}";
-
-        if (text.Length < MAX_LENGTH)
-            text += new string(' ', MAX_LENGTH - text.Length); // Add missing spaces
-
-        // Truncate the message
-        if (text.Length >= MAX_LENGTH - SEPARATOR.Length)
-            text = text[..(MAX_LENGTH - SEPARATOR.Length)];
-        text += SEPARATOR;
+        string text = BuildMessage(index != -1 ? counters[index] : 0, symbole, message);
 
         // Add the message to the symbole's list
-        if (indexesForCapteurs.TryGetValue(symbole, out int index))
+        if (index != -1)
         {
             var v = LinesForCapteurs[index];
             v.Insert(0, (text, couleur));
 
+            // Remove all lines past drawable height
             if (v.Count > drawableHeight)
                 v.RemoveRange(drawableHeight, v.Count - drawableHeight);
+
+            ++counters[index];
         }
         else
         {
-            indexesForCapteurs.Add(symbole, LinesForCapteurs.Count);
+            symbolesAssociated.Add(symbole);
             LinesForCapteurs.Add(new List<(string, Color)> { (text, couleur) });
+            counters.Add(0);
         }
 
         // Write the display
         Write(BuildString(), (x, y, _) =>
         {
-            int xRelative = x / MAX_LENGTH;
+            int xRelative = x / MAX_LENGTH; // col #
 
             // If the character is outside the ranges
             if (LinesForCapteurs.Count <= xRelative || LinesForCapteurs[xRelative].Count <= y)
@@ -82,14 +84,29 @@ internal class Ardoise : PanneauAffichage
 
         for (int i = 0; i != drawableHeight; ++i)
         {
-            foreach (var (_, index) in indexesForCapteurs)
+            for (int j = 0; j != symbolesAssociated.Count; ++j)
             {
-                result += LinesForCapteurs[index].Count <= i ?
+                result += LinesForCapteurs[j].Count <= i ?
                     new string(' ', MAX_LENGTH) :
-                    LinesForCapteurs[index][i].text;
+                    LinesForCapteurs[j][i].text;
             }
             result += "\n";
         }
         return result;
+    }
+
+    private static string BuildMessage(int counter, char symbole, string text)
+    {
+        string message = $"{counter} {symbole} : {text}"; 
+
+        // Add missing spaces
+        if (message.Length < MAX_LENGTH)
+            message += new string(' ', MAX_LENGTH - message.Length);
+
+        // Truncate the message
+        if (message.Length >= MAX_LENGTH - SEPARATOR.Length)
+            message = message[..(MAX_LENGTH - SEPARATOR.Length)];
+
+        return message + SEPARATOR; // 0 A : This is a text |
     }
 }

@@ -1,5 +1,8 @@
 ﻿/// (DD/MM/YYYY) AUTHOR:
-/// 20/10/2023 SAMUEL GAUTHIER:
+/// 24/10/2023 SAMUEL GAUTHIER:
+/// - Added 'origin' and 'size' computations
+/// 
+/// 21/10/2023 SAMUEL GAUTHIER:
 /// - Added constant 'DISPLAY_DELAY_MS'
 /// 
 /// 20/10/2023 SAMUEL GAUTHIER:
@@ -13,7 +16,7 @@ namespace RaymondCharles.Affichage;
 
 public class Écran : IObservateurMouvement, IObservateurAffichage
 {
-    const int DISPLAY_DELAY_MS = 1_000;
+    const int DISPLAY_DELAY_MS = 0;
 
     readonly List<PanneauAffichage> panneaux = new();
     bool newPanneauAdded = false;
@@ -26,7 +29,43 @@ public class Écran : IObservateurMouvement, IObservateurAffichage
         {
             panneaux.Add(panneauAffichage);
             newPanneauAdded = true;
+
+            origin = CalculateOrigin();
+            size = CalculateSize();
         }
+    }
+
+    private Point CalculateOrigin()
+    {
+        Point lowestPoint = panneaux[0].Position;
+
+        for (int i = 1; i < panneaux.Count; ++i)
+        {
+            var currentPoint = panneaux[i].Position;
+
+            if (lowestPoint.X > currentPoint.X)
+                lowestPoint.X = currentPoint.X;
+
+            if (lowestPoint.Y > currentPoint.Y)
+                lowestPoint.Y = currentPoint.Y;
+        }
+        return lowestPoint;
+    }
+    private Point CalculateSize()
+    {
+        Point highestPoint = panneaux[0].Position + new Point(panneaux[0].Width, panneaux[0].Height);
+
+        for (int i = 1; i < panneaux.Count; ++i)
+        {
+            var currentPoint = panneaux[i].Position + new Point(panneaux[i].Width, panneaux[i].Height);
+
+            if (highestPoint.X < currentPoint.X)
+                highestPoint.X = currentPoint.X;
+
+            if (highestPoint.Y < currentPoint.Y)
+                highestPoint.Y = currentPoint.Y;
+        }
+        return highestPoint;
     }
 
     public void MouvementObservé(Carte carte)
@@ -50,16 +89,18 @@ public class Écran : IObservateurMouvement, IObservateurAffichage
             Console.CursorVisible = false;
             while (!stopDisplayThread)
             {
+                // Ne pas actualiser si aucun panneaux n'a été rajouté
                 if (!newPanneauAdded)
                     continue;
 
                 lock (panneaux)
                 {
-                    for (int i = panneaux.Count - 1; i >= 0; --i)
-                    {
-                        panneaux[i].ShowPixels();
-                        panneaux.RemoveAt(i);
-                    }
+                    // Actualiser tous les panneaux
+                    foreach (var p in panneaux)
+                        p.ShowPixels();
+
+                    // Supprimer tous les panneaux de la file d'attente
+                    panneaux.Clear();
 
                     newPanneauAdded = false;
                 }

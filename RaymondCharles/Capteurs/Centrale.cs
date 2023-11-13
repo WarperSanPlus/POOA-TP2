@@ -1,4 +1,10 @@
 ﻿/// (DD/MM/YYYY) AUTHOR:
+/// 13/11/2023 SAMUEL GAUTHIER:
+/// - Changed Random object (global to local)
+/// 
+/// 20/10/2023 SAMUEL GAUTHIER:
+/// - Changed amount of Capteur from constant to parameters amount
+/// 
 /// 20/10/2023 SAMUEL GAUTHIER:
 /// - Fix random available tile picker
 /// 
@@ -22,7 +28,6 @@ namespace RaymondCharles.Capteurs;
 /// </summary>
 internal class Centrale
 {
-    const int START_CAPTEURS_COUNT = 2;
     readonly List<Capteur> CapteursInstallés = new();
 
     public Centrale()
@@ -37,32 +42,25 @@ internal class Centrale
 
     internal void Populer(Carte carte, Protagoniste protagoniste, params PanneauAffichage[] panneauAffichages)
     {
-        if (START_CAPTEURS_COUNT > panneauAffichages.Length)
-            throw new IAffichablesFournisInsuffisantsException();
-
         var emptySpots = carte.Trouver(Carte.Symboles.VIDE);
-        int count = emptySpots.Count;
-
-        if (count < START_CAPTEURS_COUNT)
+        
+        if (emptySpots.Count < panneauAffichages.Length)
             throw new PlacesLibresInsuffisantesException();
 
         var capteurs = new List<Capteur>();
 
-        //var rng = new Random();
+        var rng = new Random();
 
-        for (int i = 0; i < START_CAPTEURS_COUNT; ++i)
+        for (int i = 0; i < panneauAffichages.Length; ++i)
         {
-            var rdmIndex = Random.Shared.Next(count);
+            var rdmIndex = rng.Next(emptySpots.Count);
             var pointA = emptySpots[rdmIndex];
 
-            Capteur? cap = null;
+            Capteur? cap = i == 0 ?
+                new CaméraProximale(pointA, protagoniste, panneauAffichages[i]) :
+                new DétecteurMouvement(pointA, panneauAffichages[i]);
 
-            if (i == 0)
-                cap = new CaméraProximale(pointA, protagoniste, panneauAffichages[i]);
-            else
-                cap = new DétecteurMouvement(pointA, panneauAffichages[i]);
-
-            emptySpots[rdmIndex] = emptySpots[count - 1]; // Duplicates but doesn't matter
+            emptySpots[rdmIndex] = emptySpots[^1]; // Duplicates but doesn't matter
 
             if (cap != null)
             {
@@ -70,11 +68,9 @@ internal class Centrale
                 CapteursInstallés.Add(cap);
             }
 
-            //emptySpots.RemoveAt(emptySpots.Count - 1);
+            emptySpots.RemoveAt(emptySpots.Count - 1);
 
-            --count;
-
-            if (count == 0)
+            if (emptySpots.Count == 0)
                 break;
         }
 
@@ -83,6 +79,5 @@ internal class Centrale
 
     #region Exceptions
     public class PlacesLibresInsuffisantesException : Exception { }
-    public class IAffichablesFournisInsuffisantsException : Exception { }
     #endregion
 }

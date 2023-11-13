@@ -23,10 +23,10 @@ public class Diagnosticien : IObservateurComportements
     readonly Dictionary<Protagoniste, int> CollisionsForProtagoniste = new();
     //readonly Dictionary<Protagoniste, string> StopReasonsForProtagonistes = new();
 
-    string? RaisonArrêt = null;
+    string? raisonArrêt = null;
 
     /// <returns>L'expérimentation doit se poursuivre, considérant l'état de <paramref name="participant"/></returns>
-    public bool Poursuivre(Carte carte, Participant participant) => RaisonArrêt == null && !carte.EstSurFrontière(participant.Position);
+    public bool Poursuivre(Carte carte, Participant participant) => raisonArrêt == null && !carte.EstSurFrontière(participant.Position);
 
     /// <inheritdoc/>
     /// Possibilité d'overflow
@@ -41,13 +41,13 @@ public class Diagnosticien : IObservateurComportements
         CollisionsForProtagoniste[protagoniste] = CollisionsForProtagoniste.TryGetValue(protagoniste, out int hits) ? hits + 1 : 1;
 
         if (CollisionsForProtagoniste[protagoniste] > MAX_COLLISIONS)
-            RaisonArrêt = HEALTH_STOP;
+            raisonArrêt = HEALTH_STOP;
 
-        Console.Beep();
+        Console.Beep(); // async ?
     }
 
     /// <returns>Explications des raisons de l'arrêt demandé par le <see cref="Diagnosticien"/></returns>
-    public string ExpliquerArrêt() => RaisonArrêt ?? UNKNOWN_STOP;
+    public string ExpliquerArrêt() => raisonArrêt ?? UNKNOWN_STOP;
 
     /// <returns>Raison de l'arrêt causé par <paramref name="protagoniste"/></returns>
     //private string ExpliquerArrêt(Protagoniste protagoniste) => StopReasonsForProtagonistes.TryGetValue(protagoniste, out string? reason) ? reason : UNKNOWN_STOP;
@@ -56,13 +56,13 @@ public class Diagnosticien : IObservateurComportements
     {
         // En ordre de priorité
         if (choix == Choix.Quitter)
-            RaisonArrêt = DESIRED_STOP;
+            raisonArrêt = DESIRED_STOP;
         else
         {
             bool isValid = carte.IsMovementValid(protagoniste, choix, out Struct.Point pos);
 
             if (isValid && carte.EstSurFrontière(pos))
-                RaisonArrêt = WIN_STOP;
+                raisonArrêt = WIN_STOP;
         }
         return choix;
     }

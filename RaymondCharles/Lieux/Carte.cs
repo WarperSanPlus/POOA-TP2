@@ -160,7 +160,7 @@ public class Carte
 
     #endregion Mouvement
 
-    #region Character Finding / Identifiacation
+    #region Character Finding / Identification
 
     /// <returns>Toutes les positions sur la Carte ayant <paramref name="symbole"/> comme valeur</returns>
     public List<Point> Trouver(char symbole) => FindMatchings(c => c.Equals(symbole));
@@ -310,7 +310,7 @@ public class Carte
     }
 
     #region Exceptions
-    public class PositionIllégaleException : Exception { }
+    public class PositionIllégaleException : Exception  { }
     public class PasDeCarteException : Exception { }
     public class CarteNonRectangulaireException : Exception { }
     public class SymboleManquantException : Exception { }

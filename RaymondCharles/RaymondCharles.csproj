@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="Gauthiers Add-ons">
-      <HintPath>..\..\..\Gauthier's Add-ons\Gauthiers Add-ons.dll</HintPath>
+    <Reference Include="Gauthiers-Addons">
+      <HintPath>..\..\..\Gauthiers-Addons\Gauthiers-Addons\bin\Debug\net6.0\Gauthiers-Addons.dll</HintPath>
     </Reference>
     <Reference Include="GénérateurId">
       <HintPath>..\..\GénérateurId\GénérateurId\bin\Debug\net6.0\GénérateurId.dll</HintPath>

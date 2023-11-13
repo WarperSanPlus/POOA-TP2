@@ -1,4 +1,11 @@
 ﻿/// (DD/MM/YYYY) AUTHOR:
+/// 13/11/2023 SAMUEL GAUTHIER:
+/// - Allowed to compare two object if they are Point (Object.Equals())
+/// 
+/// 21/10/2023 SAMUEL GAUTHIER:
+/// - Made 'X' and 'Y' modifiable after initialisation
+/// - Removed 'Point' read only attribute
+/// 
 /// 21/10/2023 SAMUEL GAUTHIER:
 /// - Made Point and Distance() readonly
 
@@ -7,10 +14,10 @@ namespace RaymondCharles.Struct;
 /// <summary>
 /// Coordonnée 2D
 /// </summary>
-public readonly struct Point : IEquatable<Point>
+public struct Point : IEquatable<Point>
 {
-    public int X { get; init; }
-    public int Y { get; init; }
+    public int X { get; set; }
+    public int Y { get; set; }
 
     // Pas de constructeur primaire ;-;
     public Point(int x, int y)
@@ -26,7 +33,8 @@ public readonly struct Point : IEquatable<Point>
     public readonly bool Equals(Point other) => X.Equals(other.X) && Y.Equals(other.Y);
 
     /// <inheritdoc/>
-    public readonly override bool Equals(object? obj) => base.Equals(obj);
+    /// Dans le cas où 
+    public readonly override bool Equals(object? obj) => obj is Point p ? Equals(p) : base.Equals(obj);
 
     /// <inheritdoc/>
     public readonly override int GetHashCode() => base.GetHashCode();
@@ -52,7 +60,7 @@ public readonly struct Point : IEquatable<Point>
     public static Point operator *(Point c1, Point c2) => new(c1.X * c2.X, c1.Y * c2.Y);
 
     /// <returns>Distance entre ce point et <paramref name="destination"/></returns>
-    public readonly double Distance(Point destination) => Math.Sqrt(Math.Pow(X - destination.X, 2) + Math.Pow(Y - destination.Y, 2));
+    public double Distance(Point destination) => Math.Sqrt(Math.Pow(X - destination.X, 2) + Math.Pow(Y - destination.Y, 2));
 
     /// <returns>Distance entre ce point et le point (<paramref name="x"/>; <paramref name="y"/>)</returns>
     public double Distance(int x, int y) => Distance(new Point(x, y));

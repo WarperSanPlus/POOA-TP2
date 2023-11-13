@@ -80,20 +80,20 @@ public abstract class Protagoniste
     /// <summary>
     /// Observateurs à signaler lorsqu'un comportement a été réalisé
     /// </summary>
-    private readonly List<IObservateurComportements> AbonnésComportements = new();
+    private readonly List<IObservateurComportements> abonnésComportements = new();
 
     /// <summary>
     /// Abonne <paramref name="comportements"/> aux <see cref="IObservateurComportements"/> de cette instance
     /// </summary>
     /// Params pour permettre d'abonner plusieurs observateurs d'un coup
-    public void Abonner(params IObservateurComportements[] observateurs) => observateurs.ForEach(oc => AbonnésComportements.Add(oc));
+    public void Abonner(params IObservateurComportements[] observateurs) => observateurs.ForEach(oc => abonnésComportements.Add(oc));
 
     /// <summary>
     /// Informe les abonnés qu'une collision a été observée sur ce <see cref="Protagoniste"/>
     /// </summary>
     /// La seule raison pourquoi j'ai utilisé .ForEach au lieu de for each est pour faire une méthode d'une ligne.
     /// Si nous devions rajouté quelque chose avant/après le for each, il faudrait le changer
-    public void Collision() => AbonnésComportements.ForEach((item) =>
+    public void Collision() => abonnésComportements.ForEach((item) =>
     {
         item.CollisionObservée(this);
     });

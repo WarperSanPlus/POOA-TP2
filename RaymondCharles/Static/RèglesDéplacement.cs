@@ -26,8 +26,6 @@ public static class RèglesDéplacement
         Choix.Bas => new Point(0, distance),
         Choix.Gauche => new Point(-distance, 0),
         Choix.Haut => new Point(0, -distance),
-        _ => new Point(0, 0),
+        _ => new Point(0, 0)
     };
 }
-
-//public class ChoixInvalideException : Exception { }

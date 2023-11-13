@@ -1,4 +1,8 @@
 ﻿/// (DD/MM/YYYY) AUTHOR:
+/// 13/11/2023 SAMUEL GAUTHIER:
+/// - Implemented IDisposable
+/// - Moved code from Finalizer to Dispose()
+/// 
 /// 18/10/2023 SAMUEL GAUTHIER:
 /// - Changed visibility of Symbole
 
@@ -9,7 +13,7 @@ using RaymondCharles.Struct;
 
 namespace RaymondCharles.Capteurs;
 
-public abstract class Capteur : IObservateurMouvement
+public abstract class Capteur : IObservateurMouvement, IDisposable
 {
     static readonly IGénérateurId GénérateurCapteur = new FabriqueGénérateurs().Créer(TypeGénérateur.Recycleur);
 
@@ -18,7 +22,7 @@ public abstract class Capteur : IObservateurMouvement
     /// </summary>
     public Point Position { get; init; }
 
-    Identifiant Identifiant;
+    Identifiant identifiant;
 
     /// <summary>
     /// Symbole à afficher sur la <see cref="Carte"/>
@@ -28,12 +32,12 @@ public abstract class Capteur : IObservateurMouvement
     public Capteur(Point position)
     {
         Position = position;
-        Identifiant = GénérateurCapteur.Prendre();
+        identifiant = GénérateurCapteur.Prendre();
     }
 
     /// <inheritdoc/>
     public abstract void MouvementObservé(Carte carte);
 
     // Quand le capteur n'est plus utilisé, retourner l'identifiant
-    ~Capteur() => GénérateurCapteur.Rendre(Identifiant);
+    public void Dispose() => GénérateurCapteur.Rendre(identifiant);
 }

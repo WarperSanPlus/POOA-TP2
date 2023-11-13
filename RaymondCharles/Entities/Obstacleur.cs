@@ -1,4 +1,10 @@
 ﻿/// (DD/MM/YYYY) AUTHOR:
+/// 13/11/2023 SAMUEL GAUTHIER:
+/// - Fix thread obstacle range
+/// 
+/// 21/10/2023 SAMUEL GAUTHIER:
+/// - Added Démarrer()
+/// 
 /// 21/10/2023 SAMUEL GAUTHIER:
 /// - Added const MOVEMENT_DELAY_MS
 
@@ -12,7 +18,7 @@ namespace RaymondCharles.Entities;
 public class Obstacleur
 {
     private const int NUM_THREADS = 4;
-    private const int MOVEMENT_DELAY_MS = 1_000;
+    private const int MOVEMENT_DELAY_MS = 1000;
 
     Thread?[]? threadsOpened;
     bool requestEnd = false;
@@ -21,9 +27,7 @@ public class Obstacleur
     {
         List<Point> emptySpaces = carte.Trouver(Carte.Symboles.VIDE);
 
-        int count = emptySpaces.Count;
-
-        if (count < amount) // Regarde si le code va crash
+        if (emptySpaces.Count < amount) // Regarde si le code va crash
             throw new Centrale.PlacesLibresInsuffisantesException();
 
         var obstacles = new Obstacle[amount];
@@ -33,7 +37,8 @@ public class Obstacleur
 
         for (int i = 0; i < amount; ++i)
         {
-            var selectedItem = emptySpaces[Random.Shared.Next(0, count)];
+            var rdmIndex = Random.Shared.Next(0, emptySpaces.Count);
+            var selectedItem = emptySpaces[rdmIndex];
 
             Console.Write("Entrer le type de l'obstacle: ");
             string type = "brownien";// Console.ReadLine() ?? string.Empty;
@@ -47,17 +52,12 @@ public class Obstacleur
 
             carte.Installer(obstacles[i]);
 
-            // Déplacer l'élément afin d'optimiser la suppression
-            //var lastItem = emptySpaces[^1];
-            //Algos.PermuterObjets(ref selectedItem, ref lastItem);
-            //emptySpaces.RemoveAt(emptySpaces.Count - 1);
-
-            --count; // Réduire le range afin de simplement delete l'array au complet
+            emptySpaces[rdmIndex] = emptySpaces[^1];
         }
 
         Console.Clear();
 
-        // Equalize threads (merci mon projet C++ :D)
+        #region Equalize threads (merci mon projet C++ :D)
         // eg: 25 entities into 4 threads => (7; 6; 6; 6)
         int BASE_NUM = amount / NUM_THREADS; // Base # of entities per thread
         int MIN_INDEX = amount - BASE_NUM * NUM_THREADS; // Threads with an additional entity
@@ -71,44 +71,55 @@ public class Obstacleur
             ++nextCount;
 
         int elementCount = 0;
+        int beginIndex = 0;
 
         for (int i = 0; i < amount; ++i)
         {
             ++elementCount;
 
-            if (elementCount == nextCount)
+            if (elementCount != nextCount)
+                continue;
+
+            int begin = beginIndex;
+            int end = Math.Min(obstacles.Length, begin + elementCount);
+
+            // THREAD
+            var newThread = new Thread(() =>
             {
-                int begin = elementCount * i;
-                int end = elementCount * (i + 1) + 1;
-
-                // THREAD
-                var newThread = new Thread(() =>
+                while (!requestEnd)
                 {
-                    while (!requestEnd)
+                    for (int j = begin; j < end; ++j)
                     {
-                        for (int i = begin; i < end; ++i)
-                        {
-                            var choix = obstacles[i].Agir(carte);
-                            carte.Appliquer(obstacles[i], choix);
-                        }
-                        Thread.Sleep(MOVEMENT_DELAY_MS);
+                        var choix = obstacles[j].Agir(carte);
+                        carte.Appliquer(obstacles[j], choix);
                     }
-                });
-                // ---
+                    Thread.Sleep(MOVEMENT_DELAY_MS);
+                }
+            });
+            // ---
 
-                // Ajouter le nouveau thread
-                newThread.Start();
-                threadsOpened[threadsCount] = newThread;
-                // ---
+            // Ajouter le nouveau thread
+            threadsOpened[threadsCount] = newThread;
+            // ---
 
-                ++threadsCount;
+            ++threadsCount;
 
-                nextCount = BASE_NUM;
-                if (MIN_INDEX > threadsCount)
-                    ++nextCount;
-            }
+            nextCount = BASE_NUM;
+            if (MIN_INDEX > threadsCount)
+                ++nextCount;
+            beginIndex += elementCount;
+            elementCount = 0;
         }
-        // ---
+        #endregion
+    }
+
+    public void Démarrer()
+    {
+        if (threadsOpened == null)
+            return;
+
+        foreach (var item in threadsOpened)
+            item?.Start();   
     }
 
     /// <summary>
